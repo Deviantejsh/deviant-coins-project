@@ -25,6 +25,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column; /* Столбец */
   z-index: 9999;
 }
 
@@ -44,6 +45,15 @@ body {
   100% {
     transform: rotate(360deg);
   }
+}
+
+/* Стили для текста загрузки */
+.loading-text {
+  margin-top: 16px; /* Расстояние между кругом и текстом */
+  color: #fff; /* Белый цвет текста */
+  font-size: 18px; /* Размер текста */
+  font-weight: 600; /* Полужирный текст */
+  font-family: 'Inter', sans-serif; /* Семейство шрифтов */
 }
 
 /* Исходные стили */
@@ -102,7 +112,6 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
-
   100% {
     opacity: 0;
     transform: translateY(-50px);
@@ -127,4 +136,3 @@ body {
 #upgrade-btn:hover {
   transform: scale(1.2);
 }
-
