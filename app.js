@@ -1,21 +1,3 @@
-// Функция для проверки браузера Telegram
-function checkTelegramBrowser() {
-  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-
-  // Проверяем, содержит ли user agent "Telegram"
-  if (!userAgent.includes("Telegram")) {
-    // Перенаправление на страницу ошибки или вывод предупреждения и закрытие вкладки
-    alert('Этот сайт доступен только через браузер Telegram.');
-    window.location.href = 'https://your-error-deviantcoun.com'; // Перенаправление на страницу ошибки
-    // Или закрытие вкладки
-    // window.close();
-  }
-}
-
-// Вызов функции для проверки браузера
-checkTelegramBrowser();
-
-// Начало основного скрипта
 const $circle = document.querySelector('#circle');
 const $score = document.querySelector('#score');
 const $upgradeBtn = document.querySelector('#upgrade-btn');
