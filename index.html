@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Deviant Coins</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- Экран загрузки -->
+    <div id="loading-screen">
+      <div class="loader"></div>
+      <div class="loading-text">Загрузка</div> <!-- Добавленный текст -->
+    </div>
+
+    <div class="game">
+      <div class="header">
+        <img src="./assets/coin.png" alt="coin" />
+        <h2 class="score" id="score">42</h2>
+      </div>
+      <div class="circle">
+        <img id="circle" src="./assets/frog.png" alt="frog" />
+      </div>
+      <div class="upgrades">
+        <img id="upgrade-btn" src="./assets/upgrade_icon.png" alt="Upgrade" />
+      </div>
+    </div>
+    <script src="app.js" defer></script>
+    <script src="loading.js"></script>
+  </body>
+</html>
