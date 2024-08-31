@@ -1,7 +1,7 @@
 const $circle = document.querySelector('#circle');
 const $score = document.querySelector('#score');
 const $upgradeBtn = document.querySelector('#upgrade-btn');
-let pointsPerClick = 2;
+let pointsPerClick = 1;
 const OFFLINE_POINT_INTERVAL = 10 * 60 * 1000; // 10 минут в миллисекундах
 const POINTS_PER_OFFLINE_INTERVAL = 2; // Очки, присуждаемые каждые 10 минут оффлайн
 
