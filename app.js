@@ -72,6 +72,21 @@ function saveLastActiveTime() {
   localStorage.setItem('lastActiveTime', Date.now());
 }
 
+function showDialog(message, callback) {
+  const dialog = document.getElementById('custom-dialog');
+  const dialogMessage = dialog.querySelector('.dialog-message');
+  const okButton = dialog.querySelector('#dialog-ok-button');
+
+  dialogMessage.textContent = message;
+  dialog.classList.remove('hidden');
+
+  okButton.onclick = () => {
+    dialog.classList.add('hidden');
+    if (callback) callback(); // Выполняем действие, если передан callback
+  };
+}
+
+// Обновленный checkOfflinePoints с showDialog вместо alert
 function checkOfflinePoints() {
   const lastActiveTime = Number(localStorage.getItem('lastActiveTime')) || 0;
   const currentTime = Date.now();
@@ -81,14 +96,30 @@ function checkOfflinePoints() {
     const offlinePoints = Math.floor(elapsedTime / OFFLINE_POINT_INTERVAL) * POINTS_PER_OFFLINE_INTERVAL;
 
     if (offlinePoints > 0) {
-      alert(`Вы получили ${offlinePoints} очков за время отсутствия!`);
-      setScore(getScore() + offlinePoints);
+      showDialog(`Вы получили ${offlinePoints} Deviant Coins за время отсутствия!`, () => {
+        setScore(getScore() + offlinePoints);
+      });
     }
   }
 
   // Обновляем время последней активности до текущего времени
   saveLastActiveTime();
 }
+
+// Обновленный обработчик нажатия кнопки улучшения с showDialog
+$upgradeBtn.addEventListener('click', () => {
+  const score = getScore();
+  const upgradeCost = 3200;
+
+  if (score >= upgradeCost) {
+    pointsPerClick = 100;
+    setScore(score - upgradeCost);
+    setImage();
+    $upgradeBtn.remove(); // Удаляем кнопку улучшения после улучшения
+  } else {
+    showDialog('Недостаточно очков для улучшения! требуется 3200 Deviant Coins');
+  }
+});
 
 $circle.addEventListener('click', (event) => {
   const rect = $circle.getBoundingClientRect();
@@ -122,20 +153,6 @@ $circle.addEventListener('click', (event) => {
   setTimeout(() => {
     plusOne.remove();
   }, 2000);
-});
-
-$upgradeBtn.addEventListener('click', () => {
-  const score = getScore();
-  const upgradeCost = 3200;
-
-  if (score >= upgradeCost) {
-    pointsPerClick = 100;
-    setScore(score - upgradeCost);
-    setImage();
-    $upgradeBtn.remove(); // Удаляем кнопку улучшения после улучшения
-  } else {
-    alert('Недостаточно очков для улучшения! требуется 3200 Deviant Coins');
-  }
 });
 
 // Сохраняем время последней активности, когда пользователь покидает страницу
