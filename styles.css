@@ -173,23 +173,20 @@ body {
   padding: 20px;
 }
 
+/* Обновленные стили для кнопки диалогового окна */
 .dialog-button {
   position: absolute;
-  bottom: 20%;
+  bottom: 5%;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #e8c547;
-  color: #333;
-  border: none;
-  padding: 10px 20px;
-  font-size: 16px;
+  width: 300px; /* Установите ширину для изображения кнопки */
+  height: auto; /* Соотношение сторон изображения */
   cursor: pointer;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
+  transition: transform 0.3s ease;
 }
 
 .dialog-button:hover {
-  background-color: #ef882b;
+  transform: scale(1.1); /* Немного увеличивает кнопку при наведении */
 }
 
 .hidden {
