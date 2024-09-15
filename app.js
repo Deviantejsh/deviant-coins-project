@@ -1,60 +1,130 @@
+// Подключение библиотеки Telegram Web App
+if (window.Telegram.WebApp) {
+  const telegram = window.Telegram.WebApp;
+
+  // Декодируем данные, переданные от Telegram
+  const initData = telegram.initData;
+  const botUsername = 'sponge_coins_bot'; // Имя бота, через которого должно работать приложение
+
+  // Функция для проверки правильности бота
+  function validateBot(initData) {
+    const urlParams = new URLSearchParams(initData);
+    const botName = urlParams.get('tgWebAppBotName'); // Получаем имя бота из данных
+
+    if (botName !== botUsername) {
+      document.body.innerHTML = '<h1>Доступ разрешен только через бота @sponge_coins_bot</h1>';
+      return false; // Блокируем приложение
+    }
+    return true;
+  }
+
+  // Если валидация не прошла — блокируем работу приложения
+  if (!validateBot(initData)) {
+    throw new Error('This application can only be accessed through the @sponge_coins_bot.');
+  } else {
+    // Запускаем ваше приложение, если проверка успешна
+    start(); // Ваша функция инициализации приложения
+  }
+} else {
+  document.body.innerHTML = '<h1>Доступ разрешен только через Telegram Web App</h1>';
+}
+
+// Основной код приложения
 const $circle = document.querySelector('#circle');
 const $score = document.querySelector('#score');
 const $upgradeBtn = document.querySelector('#upgrade-btn');
 let pointsPerClick = 1;
-const OFFLINE_POINT_INTERVAL = 10 * 60 * 1000; // 10 минут в миллисекундах
-const POINTS_PER_OFFLINE_INTERVAL = 5; // Очки, присуждаемые каждые 10 минут оффлайн
+const OFFLINE_POINT_INTERVAL = 60 * 60 * 1000; // 60 минут в миллисекундах
+const POINTS_PER_OFFLINE_INTERVAL = 0; // Очки, присуждаемые каждые 60 минут оффлайн
+
+let maxEnergy = 1000;
+let currentEnergy = maxEnergy;
+const energyRegenRate = 1; // Пополнение энергии в секунду
+
+// Элементы энергии
+const $energyInfo = document.querySelector('#energy-info');
+
+// Функция для обновления энергии на экране
+function updateEnergyDisplay() {
+  $energyInfo.textContent = `${currentEnergy} / ${maxEnergy}`;
+}
+
+// Функция для восстановления энергии каждую секунду
+function regenEnergy() {
+  setInterval(() => {
+    if (currentEnergy < maxEnergy) {
+      currentEnergy += energyRegenRate;
+      currentEnergy = Math.min(currentEnergy, maxEnergy); // Не больше максимума
+      updateEnergyDisplay();
+    }
+  }, 1000); // Пополнение каждую секунду
+}
+
+// Функция для уменьшения энергии при клике
+function consumeEnergy(amount) {
+  if (currentEnergy >= amount) {
+    currentEnergy -= amount;
+    updateEnergyDisplay();
+    return true;
+  } else {
+    showDialog('There is not enough energy to perform the action!');
+    return false;
+  }
+}
 
 function start() {
   checkOfflinePoints();
   setScore(getScore());
   setImage();
+  updateOfflinePointsDisplay(); // Вызов функции обновления при старте приложения
+  regenEnergy(); // Запускаем процесс пополнения энергии
+}
+
+// Показ подсказки при наведении
+const offlinePointsDisplay = document.getElementById('offline-points-display');
+const pointsTooltip = document.getElementById('points-tooltip');
+
+offlinePointsDisplay.addEventListener('mouseenter', () => {
+  pointsTooltip.classList.remove('hidden');
+});
+
+offlinePointsDisplay.addEventListener('mouseleave', () => {
+  pointsTooltip.classList.add('hidden');
+});
+
+// Обновляем отображение очков за оффлайн время
+function updateOfflinePointsDisplay() {
+  const tooltip = document.getElementById('points-tooltip');
+  tooltip.textContent = `${POINTS_PER_OFFLINE_INTERVAL.toLocaleString()} Sponge Coin in 1 hour`; // Форматирование очков
 }
 
 function setScore(score) {
   localStorage.setItem('score', score);
-  $score.textContent = score;
+  $score.textContent = score.toLocaleString(); // Форматируем очки с разделением тысяч
 }
 
 function setImage() {
   const score = getScore();
 
-  // Ваша существующая логика setImage...
-  if (score >= 28000) {
-    $circle.setAttribute('src', './assets/ultimate_lege_reward.gif');
-  } else if (score >= 15000) {
-    $circle.setAttribute('src', './assets/epic_reward.png');
-  } else if (score >= 9000) {
+  if (score >= 18000000000) {
+    $circle.setAttribute('src', './assets/ultimate_lege_reward.webp');
+  } else if (score >= 1000000000) {
+    $circle.setAttribute('src', './assets/epic_reward.webp');
+  } else if (score >= 100000000) {
     $circle.setAttribute('src', './assets/ultimate_epic_reward.png');
-  } else if (score >= 7000) {
+  } else if (score >= 50000000) {
     $circle.setAttribute('src', './assets/legendary_reward.png');
-  } else if (score >= 5000) {
+  } else if (score >= 10000000) {
     $circle.setAttribute('src', './assets/ultimate_reward.png');
-  } else if (score >= 3700) {
-    $circle.setAttribute('src', './assets/super_reward.png');
-  } else if (score >= 2600) {
-    $circle.setAttribute('src', './assets/elite_reward.png');
-  } else if (score >= 1700) {
-    $circle.setAttribute('src', './assets/high_reward.png');
-  } else if (score >= 1000) {
-    $circle.setAttribute('src', './assets/platinum_coin.png');
-  } else if (score >= 840) {
-    $circle.setAttribute('src', './assets/gold_coin.png');
-  } else if (score >= 704) {
-    $circle.setAttribute('src', './assets/silver_coin.png');
-  } else if (score >= 617) {
-    $circle.setAttribute('src', './assets/bronze_coin.png');
-  } else if (score >= 560) {
-    $circle.setAttribute('src', './assets/dcoin.png');
-  } else if (score >= 480) {
+  } else if (score >= 2000000) {
     $circle.setAttribute('src', './assets/cat.png');
-  } else if (score >= 320) {
+  } else if (score >= 1000000) {
     $circle.setAttribute('src', './assets/catcoins.png');
-  } else if (score >= 200) {
+  } else if (score >= 100000) {
     $circle.setAttribute('src', './assets/dragon.png');
-  } else if (score >= 100) {
+  } else if (score >= 25000) {
     $circle.setAttribute('src', './assets/phoenix.png');
-  } else if (score >= 50) {
+  } else if (score >= 5000) {
     $circle.setAttribute('src', './assets/lizzard.png');
   }
 }
@@ -64,8 +134,11 @@ function getScore() {
 }
 
 function addPoints() {
-  setScore(getScore() + pointsPerClick);
-  setImage();
+  // Перед добавлением очков проверяем энергию
+  if (consumeEnergy(pointsPerClick)) {
+    setScore(getScore() + pointsPerClick);
+    setImage();
+  }
 }
 
 function saveLastActiveTime() {
@@ -77,7 +150,10 @@ function showDialog(message, callback) {
   const dialogMessage = dialog.querySelector('.dialog-message');
   const okButton = dialog.querySelector('#dialog-ok-button');
 
-  dialogMessage.textContent = message;
+  // Форматируем числа в сообщении
+  const formattedMessage = message.replace(/\d+/g, match => Number(match).toLocaleString());
+
+  dialogMessage.textContent = formattedMessage;
   dialog.classList.remove('hidden');
 
   okButton.onclick = () => {
@@ -96,7 +172,7 @@ function checkOfflinePoints() {
     const offlinePoints = Math.floor(elapsedTime / OFFLINE_POINT_INTERVAL) * POINTS_PER_OFFLINE_INTERVAL;
 
     if (offlinePoints > 0) {
-      showDialog(`Вы получили ${offlinePoints} Deviant Coins за время отсутствия!`, () => {
+      showDialog(`You Got ${offlinePoints} Sponge Coins for your absence!`, () => {
         setScore(getScore() + offlinePoints);
       });
     }
@@ -117,7 +193,8 @@ $upgradeBtn.addEventListener('click', () => {
     setImage();
     $upgradeBtn.remove(); // Удаляем кнопку улучшения после улучшения
   } else {
-    showDialog('Недостаточно очков для улучшения! требуется 3200 Deviant Coins');
+    // Форматируем очки в сообщении
+    showDialog(`Not enough Sponge Coins to upgrade! required ${upgradeCost.toLocaleString()} Sponge Coins`);
   }
 });
 
@@ -130,32 +207,31 @@ $circle.addEventListener('click', (event) => {
   const DEG = 40;
 
   const tiltX = (offsetY / rect.height) * DEG;
-  const tiltY = (offsetX / rect.width) * -DEG;
+  const tiltY = (offsetX / rect.width) * DEG;
 
-  $circle.style.setProperty('--tiltX', `${tiltX}deg`);
-  $circle.style.setProperty('--tiltY', `${tiltY}deg`);
+  // Применение стилей для поворота
+  $circle.style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
 
   setTimeout(() => {
-    $circle.style.setProperty('--tiltX', `0deg`);
-    $circle.style.setProperty('--tiltY', `0deg`);
-  }, 300);
-
-  const plusOne = document.createElement('div');
-  plusOne.classList.add('plus-one');
-  plusOne.textContent = `+${pointsPerClick}`;
-  plusOne.style.left = `${event.clientX - rect.left}px`;
-  plusOne.style.top = `${event.clientY - rect.top}px`;
-
-  $circle.parentElement.appendChild(plusOne);
+    $circle.style.transform = 'rotateX(0deg) rotateY(0deg)';
+  }, 300); // Возвращаем круг обратно через 300 миллисекунд
 
   addPoints();
-
-  setTimeout(() => {
-    plusOne.remove();
-  }, 2000);
 });
 
-// Сохраняем время последней активности, когда пользователь покидает страницу
-window.addEventListener('beforeunload', saveLastActiveTime);
+// Добавление Telegram Web App API для проверки
+function initTelegramApp() {
+  if (window.Telegram && window.Telegram.WebApp) {
+    const tg = window.Telegram.WebApp;
 
-start();
+    // Отправляем данные через Telegram Web App
+    tg.MainButton.setText("Collect Sponge Coins");
+    tg.MainButton.show();
+  }
+}
+
+// Инициализация Telegram Web App при старте
+window.addEventListener('DOMContentLoaded', () => {
+  initTelegramApp();
+  start();
+});
